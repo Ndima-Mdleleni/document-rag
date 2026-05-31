@@ -1,0 +1,120 @@
+2. Background
+
+We provide the relevant background to understand the fun-
+damentals related to LLMs in this section. We briefly discuss
+necessary components in LLMs and refer the readers interested
+in details to the original works.
+
+
+2.1. Tokenization
+
+Tokenization [59] is an essential pre-processing step in
+LLM training that parses the text into non-decomposing units
+called tokens. Tokens can be characters, subwords [60], sym-
+bols [61], or words, depending on the tokenization process.
+Some of the commonly used tokenization schemes in LLMs
+include wordpiece [62], byte pair encoding (BPE) [61], and un-
+igramLM [60]. Readers are encouraged to refer to [63] for a
+detailed survey.
+
+
+2.2. Encoding Positions
+
+The transformer processes input sequences in parallel and
+independently of each other. Moreover, the attention mod-
+ule in the transformer does not capture positional information.
+As a result, positional encodings were introduced in trans-
+former [64], where a positional embedding vector is added to
+the token embedding. Variants of positional embedding include
+absolute, relative, or learned positional encodings. Within rel-
+ative encoding, Alibi and RoPE are two widely used positional
+embeddings in LLMs.
+Alibi [65]: It subtracts a scalar bias from the attention score
+that increases with the distance between token positions. This
+favors using recent tokens for attention.
+RoPE [66]: It rotates query and key representations at an an-
+gle proportional to the token absolute position in the input
+sequence, resulting in a relative positional encoding scheme
+which decays with the distance between the tokens.
+
+
+2.3. Attention in LLMs
+
+Attention assigns weights to input tokens based on impor-
+tance so that the model gives more emphasis to relevant tokens.
+Attention in transformers [64] calculates query, key, and value
+mappings for input sequences, where the attention score is
+obtained by multiplying the query and key, and later used to
+weight values. We discuss different attention strategies used in
+LLMs below.
+Self-Attention [64]: Calculates attention using queries, keys,
+and values from the same block (encoder or decoder).
+Cross Attention: It is used in encoder-decoder architectures,
+where encoder outputs are the queries, and key-value pairs
+come from the decoder.
+Sparse Attention [67]: Self-attention has O(n2) time complex-
+ity which becomes infeasible for large sequences. To speed
+up the computation, sparse attention [67] iteratively calculates
+attention in sliding windows for speed gains.
+Flash Attention [68]: Memory access is the major bottleneck
+in calculating attention using GPUs. To speed up, flash
+attention employs input tiling to minimize the memory reads
+and writes between the GPU high bandwidth memory (HBM)
+and the on-chip SRAM.
+
+
+2.4. Activation Functions
+
+The activation functions serve a crucial role in the curve-
+fitting abilities of neural networks [69]. We discuss activation
+functions used in LLMs in this section.
+ReLU [70]: The Rectified linear unit (ReLU) is defined as:
+ReLU(x)= max(0,x) (1)
+GeLU [71]: The Gaussian Error Linear Unit (GeLU) is the
+combination of ReLU, dropout [72] and zoneout [73].
+GLU variants [74]: The Gated Linear Unit [75] is a neural
+network layer that is an element-wise product (⊗) of a linear
+transformation and a sigmoid transformed (σ) linear projection
+of the input given as:
+GLU(x,W,V,b,c)= (xW + b) ⊗σ(xV + c), (2)
+where X is the input of layer and l, W,b,V and c are learned
+parameters. Other GLU variants [74] used in LLMs are:
+ReGLU(x,W,V,b,c)= max(0,xW + b)⊗,
+GEGLU(x,W,V,b,c)= GELU(xW + b) ⊗(xV + c),
+S wiGLU(x,W,V,b,c,β)= S wishβ(xW + b) ⊗(xV + c).
+
+
+2.5. Layer Normalization
+
+Layer normalization leads to faster convergence and is an in-
+tegrated component of transformers [64]. In addition to Layer-
+Norm [76] and RMSNorm [77], LLMs use pre-layer normal-
+ization [78], applying it before multi-head attention (MHA).
+Pre-norm is shown to provide training stability in LLMs. An-
+other normalization variant, DeepNorm [79] fixes the issue with
+larger gradients in pre-norm.
+
+
+2.6. Distributed LLM Training
+
+This section describes distributed LLM training approaches
+briefly. More details are available in [13, 37, 80, 81].
+Data Parallelism: Data parallelism replicates the model on
+multiple devices where data in a batch gets divided across de-
+vices. At the end of each training iteration weights are synchro-
+nized across all devices.
+Tensor Parallelism: Tensor parallelism shards a tensor compu-
+tation across devices. It is also known as horizontal parallelism
+or intra-layer model parallelism.
+Pipeline Parallelism: Pipeline parallelism shards model layers
+across different devices. This is also known as vertical paral-
+lelism.
+Model Parallelism: A combination of tensor and pipeline par-
+allelism is known as model parallelism.
+3D Parallelism: A combination of data, tensor, and model par-
+allelism is known as 3D parallelism.
+Optimizer Parallelism: Optimizer parallelism also known as
+zero redundancy optimizer [37] implements optimizer state
+partitioning, gradient partitioning, and parameter partitioning
+across devices to reduce memory consumption while keeping
+the communication costs as low as possible.
