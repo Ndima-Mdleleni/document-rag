@@ -13,10 +13,15 @@ your question, and generates an answer using that context.
 4. **Generate** — answers your question using the relevant context
 
 ## How to run it
-```bash
-pip install sentence-transformers transformers torch numpy
-python3 Rag.py yourdocument.txt
-```
+pip install sentence-transformers transformers torch numpy anthropic streamlit
+
+Set your Anthropic API key:
+export ANTHROPIC_API_KEY="your-key-here"
+
+Run the web interface:
+streamlit run app.py
+
+Then open your browser and upload any text document to start chatting with it.
 
 ## Upgrading to Claude API
 Replace the GPT2 generator with the Anthropic Claude API for 
