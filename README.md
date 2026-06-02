@@ -49,3 +49,5 @@ new additions to my toolkit that I'll carry into future projects.
 - Sentence Transformers
 - HuggingFace Transformers
 - NumPy
+## Live Demo
+https://document-rag-k6nb6x894hz77psqyweqvb.streamlit.app
