@@ -18,7 +18,11 @@ st.caption("Upload a document and ask questions about it")
 @st.cache_resource
 def load_models():
     embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    try:
+        api_key = st.secrets["ANTHROPIC_API_KEY"]
+    except Exception:
+        api_key = os.environ.get("ANTHROPIC_API_KEY")
+    client = anthropic.Anthropic(api_key=api_key)
     return embedding_model, client
 
 embedding_model, client = load_models()
@@ -68,7 +72,6 @@ if uploaded_file:
 
     st.success(f"Document loaded: {len(text.split())} words, {len(chunks)} chunks")
 
-    # ── CHAT HISTORY ─────────────────────────────────
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
@@ -76,7 +79,6 @@ if uploaded_file:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # ── QUESTION INPUT ───────────────────────────────
     if question := st.chat_input("Ask a question about your document"):
         st.session_state.messages.append({"role": "user", "content": question})
         with st.chat_message("user"):
